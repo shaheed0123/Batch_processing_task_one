@@ -24,8 +24,6 @@ aggregated data that can be used by a future machine-learning application.
 
 After opening the project folder, you will see:
 
-
-│
 ├── aggregation/
 │   └── aggregate_taxi_data.py
 │
@@ -54,8 +52,6 @@ After opening the project folder, you will see:
 ## 3. Where Should You Start?
 
 Open the folder:
-
-data-engineering-task1
 
 Then open a terminal in this folder.
 
@@ -120,20 +116,7 @@ This is the January 2015 New York Yellow Taxi dataset.
 The dataset contains approximately 12.7 million records.
 
 The ingestion script expects the project folder to be located in the user's
-home directory with the folder name:
-
-data-engineering-task1
-
-For example:
-
-Windows:
-
-C:\Users\YourName\data-engineering-task1
-
-Linux/macOS:
-
-/home/YourName/data-engineering-task1
-
+home directory with the folder name.
 This is because the ingestion script uses the user's home directory to
 locate the project.
 
