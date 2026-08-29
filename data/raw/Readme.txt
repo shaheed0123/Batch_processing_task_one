@@ -1,0 +1,1 @@
+The dataset used in this project is the January 2015 New York Yellow Taxi dataset. The dataset is not included in GitHub because of its large size. Download the dataset from the official NYC TLC website and place the file in this folder. Can also download from Kaggle
