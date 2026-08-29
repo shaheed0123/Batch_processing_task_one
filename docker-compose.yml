@@ -1,0 +1,129 @@
+services:
+
+  # =========================
+  # HDFS NAMENODE
+  # =========================
+  namenode:
+    image: apache/hadoop:3.4.1
+    container_name: task1-namenode
+    hostname: namenode
+    user: root
+
+    command:
+      - bash
+      - -c
+      - |
+        mkdir -p /opt/hadoop/dfs/name
+        chown -R hadoop:users /opt/hadoop/dfs/name
+        su hadoop -s /bin/bash -c "hdfs namenode"
+
+    ports:
+      - "9870:9870"
+      - "8020:8020"
+
+    volumes:
+      - namenode_data:/opt/hadoop/dfs/name
+      - ./hadoop-config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+
+    networks:
+      - hadoop-net
+
+
+  # =========================
+  # HDFS DATANODE
+  # =========================
+  datanode:
+    image: apache/hadoop:3.4.1
+    container_name: task1-datanode
+    hostname: datanode
+    user: root
+
+    command:
+      - bash
+      - -c
+      - |
+        mkdir -p /opt/hadoop/dfs/data
+        chown -R hadoop:users /opt/hadoop/dfs/data
+        su hadoop -s /bin/bash -c "hdfs datanode"
+
+    ports:
+      - "9864:9864"
+      - "9866:9866"
+
+    volumes:
+      - datanode_data:/opt/hadoop/dfs/data
+      - ./hadoop-config/core-site.xml:/opt/hadoop/etc/hadoop/core-site.xml:ro
+      - ./hadoop-config/hdfs-site.xml:/opt/hadoop/etc/hadoop/hdfs-site.xml:ro
+
+    depends_on:
+      - namenode
+
+    networks:
+      - hadoop-net
+
+
+  # =========================
+  # SPARK MASTER
+  # =========================
+  spark-master:
+    image: apache/spark:3.5.7
+    container_name: task1-spark-master
+    hostname: spark-master
+
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.master.Master
+      - --host
+      - spark-master
+
+    ports:
+      - "8085:8080"
+      - "7077:7077"
+
+    networks:
+      - hadoop-net
+
+
+  # =========================
+  # SPARK WORKER
+  # =========================
+  spark-worker:
+    image: apache/spark:3.5.7
+    container_name: task1-spark-worker
+    hostname: spark-worker
+
+    command:
+      - /opt/spark/bin/spark-class
+      - org.apache.spark.deploy.worker.Worker
+      - spark://spark-master:7077
+
+    depends_on:
+      - spark-master
+
+    ports:
+      - "8081:8081"
+
+    networks:
+      - hadoop-net
+
+
+# =========================
+# DOCKER VOLUMES
+# =========================
+volumes:
+
+  namenode_data:
+    name: data-engineering-task1_namenode_data
+
+  datanode_data:
+    name: data-engineering-task1_datanode_data
+
+
+# =========================
+# NETWORK
+# =========================
+networks:
+
+  hadoop-net:
+    driver: bridge
